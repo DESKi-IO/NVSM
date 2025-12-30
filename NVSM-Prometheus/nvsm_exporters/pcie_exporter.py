@@ -63,7 +63,10 @@ def ExportMetric(ip="localhost", port="273"):
 
     # Read JWT token for NVSM-APIs
     with open('/etc/nvsm-apis/nvsm-apis-perpetual.jwt', 'r') as jwt_file:
-        tokenstring = jwt_file.read()
+        tokenstring = jwt_file.read().strip().replace('\n', '').replace('\r', '')
+    
+    if not tokenstring:
+        raise ValueError("JWT token file is empty. Please generate a valid token.")
 
     # Request to URL to get the data
     r = requests.get(
