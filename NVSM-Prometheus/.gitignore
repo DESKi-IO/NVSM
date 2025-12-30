@@ -1,0 +1,59 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.spec
+
+# Virtual Environment
+.venv/
+venv/
+ENV/
+env/
+
+# PyInstaller
+build/
+dist/
+*.spec
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Build artifacts
+*.o
+*.lo
+*.la
+.libs/
+.deps/
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+config.log
+config.status
+configure
+compile
+depcomp
+install-sh
+missing
+libtool
+ltmain.sh
+m4/
+
+# Debian packaging
+tmp_pkg_tree/
+*.deb
+*.changes
+*.buildinfo
+
+# Compiled executables
+nvsm_exporters/nvsm_prometheus_exporters

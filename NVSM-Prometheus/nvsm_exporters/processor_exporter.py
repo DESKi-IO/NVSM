@@ -10,80 +10,89 @@
 
 from prometheus_client import Gauge
 import requests
-import time
 import urllib3
-import sys
 
-ip = "localhost"
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) 
-
-metric_map = {} 
+metric_map = {}
 
 coreCount = "core_count"
 threadCount = "thread_count"
 cpuCount = "cpu_count"
 
-def init():
 
+def init():
     """
     Init function to initialize the module,
     Initialize Prometheus metrics that would be later used in the module
-    
+
     Args:
         None
-    
+
     Returns:
         None
-    
+
     """
-    
+
     # Check if metric already present in the metric_map
     if coreCount not in metric_map:
         # Create metric and add it to metric_map
-        metric_map[coreCount] = Gauge(coreCount, "Total Number of Core in CPUs")
-        
+        metric_map[coreCount] = Gauge(
+            coreCount, "Total Number of Core in CPUs")
+
     if threadCount not in metric_map:
-        metric_map[threadCount] = Gauge(threadCount, "Total Number of threads in CPUs")
-        
+        metric_map[threadCount] = Gauge(
+            threadCount, "Total Number of threads in CPUs")
+
     if cpuCount not in metric_map:
         metric_map[cpuCount] = Gauge(cpuCount, "Total Number of CPUs")
-        
+
     print("Initialized Processor Exporter...")
 
+
 def ExportMetric(ip="localhost", port="273"):
-    
     """
-    ExportMetric: This function requests from NVSM-APIs using URL. Upon gettin valid JSON data traverses the data and create and set values to metrics.
+    ExportMetric: This function requests from NVSM-APIs using URL.
+    Upon getting valid JSON data, traverses and sets values to metrics.
     The metrics include:
         1. Total Number of Cores in CPUs
         2. Total Number of Threads in CPUs
         3. Total Number of CPUs
-        
+
     Args:
         ip  : IP address of the NVSM server
         port: Port  number of the NVSM server
-        
+
     Returns:
         None
     """
     core_count = 0
     thread_count = 0
     cpu_count = 0
-    
+
     # Read JWT token for NVSM-APIs
-    with open ('/etc/nvsm-apis/nvsm-apis-perpetual.jwt', 'r') as jwt_file:
+    with open('/etc/nvsm-apis/nvsm-apis-perpetual.jwt', 'r') as jwt_file:
         tokenstring = jwt_file.read()
 
     # Request to URL to get the data
-    r = requests.get('https://' + str(ip) + ':' + str(port) + '/redfish/v1/Systems/1/Processors', timeout=5, verify=False, headers={'Authorization': 'Bearer '+tokenstring})
-    
+    r = requests.get(
+        'https://' + str(ip) + ':' + str(port) + '/redfish/v1/Systems/1/Processors',
+        timeout=5,
+        verify=False,
+        headers={
+            'Authorization': 'Bearer ' + tokenstring})
+
     # Read data returned by URL
     data = r.json()
-    
+
     # Iterate over the processor collection to get the processor information
     for processor in data["Members"]:
-        r = requests.get('https://' + str(ip) + ':273' + processor["@odata.id"], timeout=5, verify=False, headers={'Authorization': 'Bearer '+tokenstring})
+        r = requests.get(
+            'https://' + str(ip) + ':273' + processor["@odata.id"],
+            timeout=5,
+            verify=False,
+            headers={
+                'Authorization': 'Bearer ' + tokenstring})
         proc_data = r.json()
         core_count += proc_data["TotalCores"]
         thread_count += proc_data["TotalThreads"]

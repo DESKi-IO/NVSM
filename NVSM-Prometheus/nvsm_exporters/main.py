@@ -10,22 +10,22 @@
 
 import importlib
 import os
-import urllib3
-import time
 import sys
+import time
+import urllib3
 import yaml
-import alerts_exporter
-import gpu_exporter
-import memory_exporter
-import pcie_exporter
-import processor_exporter
-import storage_exporter
-import thermal_exporter
-import power_exporter
+import alerts_exporter  # noqa: F401
+import gpu_exporter  # noqa: F401
+import memory_exporter  # noqa: F401
+import pcie_exporter  # noqa: F401
+import processor_exporter  # noqa: F401
+import storage_exporter  # noqa: F401
+import thermal_exporter  # noqa: F401
+import power_exporter  # noqa: F401
 
 from prometheus_client import start_http_server
 
-urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning) 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 modules = []
 metric_exporter_port = 8000
@@ -45,7 +45,7 @@ if not os.path.exists(DefaultConfigFilePath):
 try:
     with open(DefaultConfigFilePath) as ymlfile:
         configyml = yaml.safe_load(ymlfile)
-except:
+except Exception:
     sys.exit("Error in config file")
 
 # Check if config file contains metric_exporter info
@@ -67,12 +67,12 @@ start_http_server(metric_exporter_port)
 # Import all the modules and call the init functions for each one of them
 for e in metric_exporters:
     mod = e.replace(".py", "")
-    module = __import__(mod)
+    module = importlib.import_module(mod)
     module.init()
     modules.append(module)
-    
+
 # Run the exporters at exporters_interval intervals
-while(True):
+while True:
     for module in modules:
         ExportMetric = getattr(module, 'ExportMetric')
         try:
