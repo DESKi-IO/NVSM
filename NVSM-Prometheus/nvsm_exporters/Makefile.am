@@ -26,5 +26,5 @@ dist_config_DATA = \
 	nvsm-prometheus-exporters.config
 
 nvsm_prometheus_exporters$(EXEEXT): $(nvsm_prometheus_exporters_SOURCES)
-	pyinstaller --onefile main.py
+	python3 -m PyInstaller --onefile main.py
 	mv dist/main nvsm_prometheus_exporters

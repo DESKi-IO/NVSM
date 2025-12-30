@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 #
 # Copyright (c) 2018, NVIDIA CORPORATION.  All rights reserved.
 #
@@ -44,7 +44,7 @@ if not os.path.exists(DefaultConfigFilePath):
 # Open config file
 try:
     with open(DefaultConfigFilePath) as ymlfile:
-        configyml = yaml.load(ymlfile)
+        configyml = yaml.safe_load(ymlfile)
 except:
     sys.exit("Error in config file")
 
@@ -80,7 +80,7 @@ while(True):
         except KeyboardInterrupt:
             sys.exit(1)
         except Exception as e:
-            print e
-            print "Failed"
+            print(e)
+            print("Failed")
             continue
     time.sleep(exporters_interval)
